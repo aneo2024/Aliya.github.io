@@ -1,0 +1,362 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>OpenClaw 安装及连接微信聊天平台 | Aliya的小岛</title><meta name="author" content="Aliya"><meta name="copyright" content="Aliya"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="OpenClaw 安装及连接微信聊天平台📚 参考资料 OpenClaw 完整安装教程与个人使用指南（2026 最新版）- 知乎 【保姆级教程】手把手教你安装 OpenClaw 并接入飞书 - 腾讯云开发者社区   🛠️ 安装方式选择方案：通过 WSL2 进行安装 环境依赖   依赖项 版本要求    Node.js v22.x.x 或更高，否则需要升级    📋 关键安装步骤第一步：安装 W">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenClaw 安装及连接微信聊天平台">
+<meta property="og:url" content="https://aneo2024.github.io/posts/882249310/index.html">
+<meta property="og:site_name" content="Aliya的小岛">
+<meta property="og:description" content="OpenClaw 安装及连接微信聊天平台📚 参考资料 OpenClaw 完整安装教程与个人使用指南（2026 最新版）- 知乎 【保姆级教程】手把手教你安装 OpenClaw 并接入飞书 - 腾讯云开发者社区   🛠️ 安装方式选择方案：通过 WSL2 进行安装 环境依赖   依赖项 版本要求    Node.js v22.x.x 或更高，否则需要升级    📋 关键安装步骤第一步：安装 W">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aneo2024.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-04-15T08:44:22.000Z">
+<meta property="article:modified_time" content="2026-04-15T08:44:57.048Z">
+<meta property="article:author" content="Aliya">
+<meta property="article:tag" content="OpenClaw">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aneo2024.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "OpenClaw 安装及连接微信聊天平台",
+  "url": "https://aneo2024.github.io/posts/882249310/",
+  "image": "https://aneo2024.github.io/img/avatar.jpg",
+  "datePublished": "2026-04-15T08:44:22.000Z",
+  "dateModified": "2026-04-15T08:44:57.048Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Aliya",
+      "url": "https://aneo2024.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://aneo2024.github.io/posts/882249310/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.9/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":-1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'OpenClaw 安装及连接微信聊天平台',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://cdn.jsdelivr.net/gh/aneo2024/blog-images/img/v2-5667a80f11394579783f096f10add3c5_r.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/Projects/"><i class="fa-fw fas fa-code"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/Tools/"><i class="fa-fw fas fa-tools"></i><span> 工具</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Aliya的小岛</span></a><a class="nav-page-title" href="/"><span class="site-name">OpenClaw 安装及连接微信聊天平台</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/Projects/"><i class="fa-fw fas fa-code"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/Tools/"><i class="fa-fw fas fa-tools"></i><span> 工具</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i></span></div></nav><div id="post-info"><h1 class="post-title">OpenClaw 安装及连接微信聊天平台</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-04-15T08:44:22.000Z" title="发表于 2026-04-15 16:44:22">2026-04-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-04-15T08:44:57.048Z" title="更新于 2026-04-15 16:44:57">2026-04-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BA%BA%E6%9C%BA%E4%BA%A4%E4%BA%92/">人机交互</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">612</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>2分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:365,&quot;messagePrev&quot;:&quot;It has been&quot;,&quot;messageNext&quot;:&quot;days since the last update, the content of the article may be outdated.&quot;,&quot;postUpdate&quot;:&quot;2026-04-15 16:44:57&quot;}" hidden></div><h1 id="OpenClaw-安装及连接微信聊天平台"><a href="#OpenClaw-安装及连接微信聊天平台" class="headerlink" title="OpenClaw 安装及连接微信聊天平台"></a>OpenClaw 安装及连接微信聊天平台</h1><h2 id="📚-参考资料"><a href="#📚-参考资料" class="headerlink" title="📚 参考资料"></a>📚 参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/2023691324063262683">OpenClaw 完整安装教程与个人使用指南（2026 最新版）- 知乎</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2626160?shareByChannel=link">【保姆级教程】手把手教你安装 OpenClaw 并接入飞书 - 腾讯云开发者社区</a></li>
+</ul>
+<hr>
+<h2 id="🛠️-安装方式"><a href="#🛠️-安装方式" class="headerlink" title="🛠️ 安装方式"></a>🛠️ 安装方式</h2><p><strong>选择方案</strong>：通过 WSL2 进行安装</p>
+<h3 id="环境依赖"><a href="#环境依赖" class="headerlink" title="环境依赖"></a>环境依赖</h3><table>
+<thead>
+<tr>
+<th>依赖项</th>
+<th>版本要求</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Node.js</td>
+<td>v22.x.x 或更高，否则需要升级</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="📋-关键安装步骤"><a href="#📋-关键安装步骤" class="headerlink" title="📋 关键安装步骤"></a>📋 关键安装步骤</h2><h3 id="第一步：安装-WSL2"><a href="#第一步：安装-WSL2" class="headerlink" title="第一步：安装 WSL2"></a>第一步：安装 WSL2</h3><ol>
+<li><strong>以管理员身份打开 PowerShell</strong></li>
+<li>执行安装命令：</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl <span class="literal">--install</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>完成后重启电脑</strong></li>
+<li>重启后设置 Linux 用户名和密码</li>
+</ol>
+<h3 id="第二步：优化-WSL2-内存配置"><a href="#第二步：优化-WSL2-内存配置" class="headerlink" title="第二步：优化 WSL2 内存配置"></a>第二步：优化 WSL2 内存配置</h3><ol>
+<li>在 <code>C:\Users\你的用户名\</code> 目录下创建 <code>.wslconfig</code> 文件</li>
+<li>添加以下配置内容：</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[wsl2]</span></span><br><span class="line"><span class="attr">memory</span>=<span class="number">4</span>GB</span><br><span class="line"><span class="attr">processors</span>=<span class="number">2</span></span><br><span class="line"><span class="attr">swap</span>=<span class="number">2</span>GB</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>保存文件后执行以下命令使配置生效：</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl <span class="literal">--shutdown</span></span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>重新打开 WSL 终端</li>
+</ol>
+<h3 id="第三步：安装-Node-js-24-和-OpenClaw"><a href="#第三步：安装-Node-js-24-和-OpenClaw" class="headerlink" title="第三步：安装 Node.js 24 和 OpenClaw"></a>第三步：安装 Node.js 24 和 OpenClaw</h3><p>打开 WSL 终端（Ubuntu），依次执行以下命令：</p>
+<h4 id="1-安装-Node-js-24-LTS"><a href="#1-安装-Node-js-24-LTS" class="headerlink" title="1. 安装 Node.js 24 LTS"></a>1. 安装 Node.js 24 LTS</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://deb.nodesource.com/setup_24.x | <span class="built_in">sudo</span> -E bash -</span><br><span class="line"><span class="built_in">sudo</span> apt-get install -y nodejs</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-验证安装版本"><a href="#2-验证安装版本" class="headerlink" title="2. 验证安装版本"></a>2. 验证安装版本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node -v  <span class="comment"># 应显示 v24.x.x</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-安装-OpenClaw（官方一键脚本）"><a href="#3-安装-OpenClaw（官方一键脚本）" class="headerlink" title="3. 安装 OpenClaw（官方一键脚本）"></a>3. 安装 OpenClaw（官方一键脚本）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://openclaw.ai/install.sh | sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="第四步：运行配置向导"><a href="#第四步：运行配置向导" class="headerlink" title="第四步：运行配置向导"></a>第四步：运行配置向导</h3><p>在 WSL 终端中执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw onboard --install-daemon</span><br></pre></td></tr></table></figure>
+
+<h3 id="第五步：从-Windows-浏览器访问"><a href="#第五步：从-Windows-浏览器访问" class="headerlink" title="第五步：从 Windows 浏览器访问"></a>第五步：从 Windows 浏览器访问</h3><ol>
+<li>直接打开访问地址：<strong><a target="_blank" rel="noopener" href="http://localhost:18789/">http://localhost:18789</a></strong></li>
+<li>若无法访问，请在 Windows 防火墙中放行 <strong>18789</strong> 端口的入站规则</li>
+</ol>
+<hr>
+<h2 id="🤖-大模型-API-配置"><a href="#🤖-大模型-API-配置" class="headerlink" title="🤖 大模型 API 配置"></a>🤖 大模型 API 配置</h2><p><strong>选用模型</strong>：国内智谱 AI - <strong>GLM 4.7</strong></p>
+<hr>
+<h2 id="🔗-连接微信平台步骤"><a href="#🔗-连接微信平台步骤" class="headerlink" title="🔗 连接微信平台步骤"></a>🔗 连接微信平台步骤</h2><h3 id="📝-接入准备与前置条件"><a href="#📝-接入准备与前置条件" class="headerlink" title="📝 接入准备与前置条件"></a>📝 接入准备与前置条件</h3><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>具体要求</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>微信版本</strong></td>
+<td>需升级至最新版本（建议 <strong>8.0.70 及以上</strong>）</td>
+</tr>
+<tr>
+<td><strong>系统支持</strong></td>
+<td>部分功能目前主要支持 <strong>iOS 系统</strong></td>
+</tr>
+<tr>
+<td><strong>插件确认</strong></td>
+<td>在微信「我 → 设置 → 插件」中查看是否有「微信 ClawBot」<br>若没有请重启微信或等待逐步放量</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="🚀-具体操作步骤"><a href="#🚀-具体操作步骤" class="headerlink" title="🚀 具体操作步骤"></a>🚀 具体操作步骤</h3><h4 id="第一步：启用插件"><a href="#第一步：启用插件" class="headerlink" title="第一步：启用插件"></a>第一步：启用插件</h4><p>在微信插件页面找到 <strong>ClawBot</strong>，根据提示开启功能并获取授权。</p>
+<h4 id="第二步：安装连接组件"><a href="#第二步：安装连接组件" class="headerlink" title="第二步：安装连接组件"></a>第二步：安装连接组件</h4><p>在部署 OpenClaw 的电脑终端执行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx -y @tencent-weixin/openclaw-weixin-cli@latest install</span><br></pre></td></tr></table></figure>
+
+<h4 id="第三步：扫码绑定"><a href="#第三步：扫码绑定" class="headerlink" title="第三步：扫码绑定"></a>第三步：扫码绑定</h4><p>终端显示二维码后，使用微信扫描并完成账号绑定，成功后即可在聊天中调用 AI 功能。</p>
+<hr>
+<h3 id="📸-效果展示"><a href="#📸-效果展示" class="headerlink" title="📸 效果展示"></a>📸 效果展示</h3><div align="center">
+  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/aneo2024/blog-images/img/1776242164371.png" width="45%" style="margin: 10px; border-radius: 8px;" />
+  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/aneo2024/blog-images/img/1776242181376.png" width="45%" style="margin: 10px; border-radius: 8px;" />
+</div>
+
+<blockquote>
+<div align="center">
+✅ 左图：OpenClaw 后台管理界面 &nbsp;&nbsp;|&nbsp;&nbsp; 右图：微信聊天中 AI 回复效果
+</div></blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://aneo2024.github.io">Aliya</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://aneo2024.github.io/posts/882249310/">https://aneo2024.github.io/posts/882249310/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://aneo2024.github.io" target="_blank">Aliya的小岛</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/OpenClaw/">OpenClaw</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/posts/910012687/" title="3-28"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">3-28</div></div><div class="info-2"><div class="info-item-1">哈希表牺牲空间换时间1.两数相加：已经遍历过的数，用哈希表存储，遍历当前数时，用当前数的补数去哈希表中找python:使用dict实现哈希表    hashtable &#x3D; dict()    find方法：直接用python语法中的in运算符即可，返回值为bool类型    enumerate(nums):返回一个枚举对象，包含数组元素的索引和值(索引, 数组元素)    for index, num in enumerate(nums):        if target - num in hashtable:            return [hashtable[target - num], index]        if num in hashtable:            hashtable[num] +&#x3D; 1        else:            hashtable[num] &#x3D; 1C++:使用unordered_map实现哈希表    unordered_map&lt;int, int&gt; hashtable;  ...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Aliya</div><div class="author-info-description">旅行者</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/aneo2024"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#OpenClaw-%E5%AE%89%E8%A3%85%E5%8F%8A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E5%B9%B3%E5%8F%B0"><span class="toc-number">1.</span> <span class="toc-text">OpenClaw 安装及连接微信聊天平台</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%9A-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">1.1.</span> <span class="toc-text">📚 参考资料</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9B%A0%EF%B8%8F-%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">🛠️ 安装方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E4%BE%9D%E8%B5%96"><span class="toc-number">1.2.1.</span> <span class="toc-text">环境依赖</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%8B-%E5%85%B3%E9%94%AE%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.3.</span> <span class="toc-text">📋 关键安装步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%AE%89%E8%A3%85-WSL2"><span class="toc-number">1.3.1.</span> <span class="toc-text">第一步：安装 WSL2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E4%BC%98%E5%8C%96-WSL2-%E5%86%85%E5%AD%98%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.2.</span> <span class="toc-text">第二步：优化 WSL2 内存配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E5%AE%89%E8%A3%85-Node-js-24-%E5%92%8C-OpenClaw"><span class="toc-number">1.3.3.</span> <span class="toc-text">第三步：安装 Node.js 24 和 OpenClaw</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85-Node-js-24-LTS"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">1. 安装 Node.js 24 LTS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">2. 验证安装版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%AE%89%E8%A3%85-OpenClaw%EF%BC%88%E5%AE%98%E6%96%B9%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%EF%BC%89"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">3. 安装 OpenClaw（官方一键脚本）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E8%BF%90%E8%A1%8C%E9%85%8D%E7%BD%AE%E5%90%91%E5%AF%BC"><span class="toc-number">1.3.4.</span> <span class="toc-text">第四步：运行配置向导</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9A%E4%BB%8E-Windows-%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AE"><span class="toc-number">1.3.5.</span> <span class="toc-text">第五步：从 Windows 浏览器访问</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A4%96-%E5%A4%A7%E6%A8%A1%E5%9E%8B-API-%E9%85%8D%E7%BD%AE"><span class="toc-number">1.4.</span> <span class="toc-text">🤖 大模型 API 配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%97-%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1%E5%B9%B3%E5%8F%B0%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.5.</span> <span class="toc-text">🔗 连接微信平台步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%93%9D-%E6%8E%A5%E5%85%A5%E5%87%86%E5%A4%87%E4%B8%8E%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.5.1.</span> <span class="toc-text">📝 接入准备与前置条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%9A%80-%E5%85%B7%E4%BD%93%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.5.2.</span> <span class="toc-text">🚀 具体操作步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%90%AF%E7%94%A8%E6%8F%92%E4%BB%B6"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">第一步：启用插件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E5%AE%89%E8%A3%85%E8%BF%9E%E6%8E%A5%E7%BB%84%E4%BB%B6"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">第二步：安装连接组件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E6%89%AB%E7%A0%81%E7%BB%91%E5%AE%9A"><span class="toc-number">1.5.2.3.</span> <span class="toc-text">第三步：扫码绑定</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%93%B8-%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA"><span class="toc-number">1.5.3.</span> <span class="toc-text">📸 效果展示</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/882249310/" title="OpenClaw 安装及连接微信聊天平台">OpenClaw 安装及连接微信聊天平台</a><time datetime="2026-04-15T08:44:22.000Z" title="发表于 2026-04-15 16:44:22">2026-04-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/910012687/" title="3-28">3-28</a><time datetime="2026-03-28T13:14:42.000Z" title="发表于 2026-03-28 21:14:42">2026-03-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3419680426/" title="ubuntu上配置ros1">ubuntu上配置ros1</a><time datetime="2026-03-18T06:09:46.000Z" title="发表于 2026-03-18 14:09:46">2026-03-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/882249387/" title="强化学习（一）">强化学习（一）</a><time datetime="2026-03-16T06:23:22.000Z" title="发表于 2026-03-16 14:23:22">2026-03-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/281221727/" title="循环神经网络（RNN）学习笔记（一）">循环神经网络（RNN）学习笔记（一）</a><time datetime="2026-01-06T07:04:41.000Z" title="发表于 2026-01-06 15:04:41">2026-01-06</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Aliya</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div><div class="footer_custom_text">@ 2026 Aliya的小岛 | Powered by Hexo & Butterfly</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.9/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script async src="/js/diytitle.js"></script><script async src= "/js/clock-weather.js"></script><script id="canvas_nest" defer="defer" color="0,0,0" opacity="0.7" zIndex="-1" count="120" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>
