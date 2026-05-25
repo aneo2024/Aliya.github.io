@@ -1,0 +1,308 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>React 状态更新异步特性问题分析 | Aliya的小岛</title><meta name="author" content="Aliya"><meta name="copyright" content="Aliya"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="React 状态更新异步特性问题分析问题描述在 React 应用中，当使用 ReactPlayer 组件播放视频时，可能会遇到视频不播放、Media 面板为空的问题。这通常是由 React 状态更新的异步特性导致的。 问题分析 React 状态更新是异步的：当你调用 setPlaybackUrl(url) 时，React 不会立即更新 playbackUrl 状态 当前渲染周期：在调用 setPl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React 状态更新异步特性问题分析">
+<meta property="og:url" content="https://aneo2024.github.io/posts/3971268262/index.html">
+<meta property="og:site_name" content="Aliya的小岛">
+<meta property="og:description" content="React 状态更新异步特性问题分析问题描述在 React 应用中，当使用 ReactPlayer 组件播放视频时，可能会遇到视频不播放、Media 面板为空的问题。这通常是由 React 状态更新的异步特性导致的。 问题分析 React 状态更新是异步的：当你调用 setPlaybackUrl(url) 时，React 不会立即更新 playbackUrl 状态 当前渲染周期：在调用 setPl">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aneo2024.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-05-25T11:51:03.176Z">
+<meta property="article:modified_time" content="2026-05-25T11:53:24.441Z">
+<meta property="article:author" content="Aliya">
+<meta property="article:tag" content="React">
+<meta property="article:tag" content="状态更新">
+<meta property="article:tag" content="异步特性">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aneo2024.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "React 状态更新异步特性问题分析",
+  "url": "https://aneo2024.github.io/posts/3971268262/",
+  "image": "https://aneo2024.github.io/img/avatar.jpg",
+  "datePublished": "2026-05-25T11:51:03.176Z",
+  "dateModified": "2026-05-25T11:53:24.441Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Aliya",
+      "url": "https://aneo2024.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://aneo2024.github.io/posts/3971268262/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.9/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":-1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'React 状态更新异步特性问题分析',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://cdn.jsdelivr.net/gh/aneo2024/blog-images/img/v2-5667a80f11394579783f096f10add3c5_r.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">18</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/Projects/"><i class="fa-fw fas fa-code"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/Tools/"><i class="fa-fw fas fa-tools"></i><span> 工具</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Aliya的小岛</span></a><a class="nav-page-title" href="/"><span class="site-name">React 状态更新异步特性问题分析</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/Projects/"><i class="fa-fw fas fa-code"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/Tools/"><i class="fa-fw fas fa-tools"></i><span> 工具</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i></span></div></nav><div id="post-info"><h1 class="post-title">React 状态更新异步特性问题分析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-25T11:51:03.176Z" title="发表于 2026-05-25 19:51:03">2026-05-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-25T11:53:24.441Z" title="更新于 2026-05-25 19:53:24">2026-05-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/React/">React</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/React/%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0/">状态更新</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/React/%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0/%E5%BC%82%E6%AD%A5%E7%89%B9%E6%80%A7/">异步特性</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:365,&quot;messagePrev&quot;:&quot;It has been&quot;,&quot;messageNext&quot;:&quot;days since the last update, the content of the article may be outdated.&quot;,&quot;postUpdate&quot;:&quot;2026-05-25 19:53:24&quot;}" hidden></div><h1 id="React-状态更新异步特性问题分析"><a href="#React-状态更新异步特性问题分析" class="headerlink" title="React 状态更新异步特性问题分析"></a>React 状态更新异步特性问题分析</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在 React 应用中，当使用 ReactPlayer 组件播放视频时，可能会遇到视频不播放、Media 面板为空的问题。这通常是由 React 状态更新的异步特性导致的。</p>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><ol>
+<li><strong>React 状态更新是异步的</strong>：当你调用 <code>setPlaybackUrl(url)</code> 时，React 不会立即更新 <code>playbackUrl</code> 状态</li>
+<li><strong>当前渲染周期</strong>：在调用 <code>setPlaybackUrl</code> 后的当前渲染周期中，<code>playbackUrl</code> 仍然是旧值（空字符串或 undefined）</li>
+<li><strong>播放器组件</strong>：ReactPlayer 组件在当前渲染周期中读到的是旧值，所以没有发起视频请求</li>
+<li><strong>结果</strong>：视频没有播放，Media 面板为空</li>
+</ol>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><h3 id="1-使用条件渲染"><a href="#1-使用条件渲染" class="headerlink" title="1. 使用条件渲染"></a>1. 使用条件渲染</h3><p>确保只有当 <code>playbackUrl</code> 不为空时才渲染 ReactPlayer 组件：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;playbackLoading ? (</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">textAlign:</span> &#x27;<span class="attr">center</span>&#x27;, <span class="attr">padding:</span> &#x27;<span class="attr">100px</span> <span class="attr">0</span>&#x27; &#125;&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;<span class="name">Spin</span> <span class="attr">size</span>=<span class="string">&quot;large&quot;</span> <span class="attr">description</span>=<span class="string">&quot;加载视频中...&quot;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">) : playbackUrl ? (</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">position:</span> &#x27;<span class="attr">relative</span>&#x27;, <span class="attr">paddingTop:</span> &#x27;<span class="attr">56.25</span>%&#x27; &#125;&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;<span class="name">ReactPlayer</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      <span class="attr">url</span>=<span class="string">&#123;playbackUrl&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      // <span class="attr">其他属性</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">    /&gt;</span></span></span><br><span class="line"><span class="language-xml">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">) : (</span><br><span class="line">  <span class="comment">// 空状态</span></span><br><span class="line">)&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-使用-useEffect-监听状态变化"><a href="#2-使用-useEffect-监听状态变化" class="headerlink" title="2. 使用 useEffect 监听状态变化"></a>2. 使用 useEffect 监听状态变化</h3><p>使用 <code>useEffect</code> 钩子监听 <code>playbackUrl</code> 的变化，当它变化时执行相关操作：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (playbackUrl) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;playbackUrl 已更新:&quot;</span>, playbackUrl);</span><br><span class="line">    <span class="comment">// 这里可以执行一些与视频播放相关的操作</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;, [playbackUrl]);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-检查-handlePlayLesson-函数"><a href="#3-检查-handlePlayLesson-函数" class="headerlink" title="3. 检查 handlePlayLesson 函数"></a>3. 检查 <code>handlePlayLesson</code> 函数</h3><p>确保在获取到播放 URL 后，状态更新正确：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">handlePlayLesson</span> = <span class="keyword">async</span> (<span class="params">lesson</span>) =&gt; &#123;</span><br><span class="line">  <span class="comment">// 其他代码...</span></span><br><span class="line"></span><br><span class="line">  <span class="title function_">setPlaybackLoading</span>(<span class="literal">true</span>);</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> response = <span class="keyword">await</span> axios.<span class="title function_">post</span>(</span><br><span class="line">      <span class="string">&quot;/api/courses/playback&quot;</span>,</span><br><span class="line">      &#123; <span class="attr">course_id</span>: courseId, <span class="attr">lesson_id</span>: lesson.<span class="property">lessonId</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">headers</span>: &#123; <span class="title class_">Authorization</span>: <span class="string">`Bearer <span class="subst">$&#123;token&#125;</span>`</span> &#125; &#125;,</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (response.<span class="property">data</span>.<span class="property">error</span>.<span class="property">code</span> === <span class="number">1</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> newPlaybackUrl = response.<span class="property">data</span>.<span class="property">playback_url</span>;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;获取播放URL成功:&quot;</span>, newPlaybackUrl);</span><br><span class="line">      <span class="title function_">setCurrentLesson</span>(lesson);</span><br><span class="line">      <span class="title function_">setPlaybackUrl</span>(newPlaybackUrl);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 错误处理...</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">    <span class="comment">// 错误处理...</span></span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="title function_">setPlaybackLoading</span>(<span class="literal">false</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="验证方法"><a href="#验证方法" class="headerlink" title="验证方法"></a>验证方法</h2><ol>
+<li><strong>检查控制台</strong>：确认 “获取播放URL成功” 日志是否显示，以及 URL 是否正确</li>
+<li><strong>检查网络请求</strong>：在浏览器开发者工具的网络标签页中，确认视频文件是否被请求</li>
+<li><strong>检查 React 组件</strong>：使用 React DevTools 检查 <code>playbackUrl</code> 状态是否正确更新</li>
+<li><strong>手动测试</strong>：复制播放 URL 在新标签页中打开，确认视频可以直接访问</li>
+</ol>
+<h2 id="相关技术点"><a href="#相关技术点" class="headerlink" title="相关技术点"></a>相关技术点</h2><h3 id="React-状态更新机制"><a href="#React-状态更新机制" class="headerlink" title="React 状态更新机制"></a>React 状态更新机制</h3><ul>
+<li>React 的状态更新是异步的，这是为了优化性能，避免不必要的渲染</li>
+<li>当调用 <code>setState</code> 或函数式组件中的状态更新函数时，React 会将更新加入队列，然后在适当的时机批量处理</li>
+<li>在同一个事件处理函数中多次调用状态更新，会被合并为一次更新</li>
+</ul>
+<h3 id="条件渲染"><a href="#条件渲染" class="headerlink" title="条件渲染"></a>条件渲染</h3><ul>
+<li>条件渲染是 React 中控制组件显示和隐藏的常用方法</li>
+<li>通过在 JSX 中使用逻辑运算符（如 <code>&amp;&amp;</code>、<code>? :</code>），可以根据条件决定是否渲染某个组件</li>
+<li>对于视频播放器这类需要资源加载的组件，条件渲染可以避免在没有必要时发起请求</li>
+</ul>
+<h3 id="useEffect-钩子"><a href="#useEffect-钩子" class="headerlink" title="useEffect 钩子"></a>useEffect 钩子</h3><ul>
+<li><code>useEffect</code> 是 React 中用于处理副作用的钩子</li>
+<li>它接受两个参数：一个回调函数和一个依赖数组</li>
+<li>当依赖数组中的值发生变化时，回调函数会被执行</li>
+<li>对于需要在状态变化时执行操作的场景，<code>useEffect</code> 是一个非常有用的工具</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>React 状态更新的异步特性是一个常见的坑点，特别是在处理需要立即响应的场景时。通过使用条件渲染、useEffect 钩子等方法，可以有效地解决这类问题，确保组件能够正确地响应状态变化。</p>
+<p>在视频播放场景中，确保只有当 <code>playbackUrl</code> 不为空时才渲染 ReactPlayer 组件，是解决视频不播放问题的关键。同时，使用 useEffect 监听状态变化，可以在 URL 更新后执行相关操作，进一步确保视频播放的可靠性。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://aneo2024.github.io">Aliya</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://aneo2024.github.io/posts/3971268262/">https://aneo2024.github.io/posts/3971268262/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://aneo2024.github.io" target="_blank">Aliya的小岛</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/React/">React</a><a class="post-meta__tags" href="/tags/%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0/">状态更新</a><a class="post-meta__tags" href="/tags/%E5%BC%82%E6%AD%A5%E7%89%B9%E6%80%A7/">异步特性</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/posts/1320873215/" title="Git 清除敏感提交笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Git 清除敏感提交笔记</div></div><div class="info-2"><div class="info-item-1">Git 清除敏感提交笔记1. 取消暂存所有文件（仅取消 Git 追踪标记，不删除本地文件）1git rm -r --cached .   作用：将所有已暂存（staged）的文件取消暂存，从 Git 暂存区移除，保留工作区本地文件 配合 .gitignore 使用，可让忽略规则生效  2. 查看当前 Git 状态1git status   作用：查看文件暂存状态、分支提交差异（如本地领先远程 N 个提交）  3. 彻底删除本地敏感提交1git reset --hard HEAD~6  命令解析 HEAD~6：定位到当前最新提交往前数第 6 个版本 --hard：强制重置，同步将代码文件 + 提交记录完全恢复到目标版本 效果：彻底丢弃目标版本之后的 6 个提交，包含在这 6 次提交中的所有密钥、敏感文件、配置会一并清除  核心原理该命令会回滚分支的版本指针，同时重置工作区和暂存区，直接抹除后续 6 次提交的所有记录，是清除已提交敏感信息最直接的方式。 </div></div></div></a><a class="pagination-related" href="/posts/3585352294/" title="智能机器人复习"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">智能机器人复习</div></div><div class="info-2"><div class="info-item-1">智能机器人复习参考题目1： 一、核心知识雅可比矩阵的基本定义它是把「关节运动」映射到「末端运动」的线性变换：  速度层面：$\dot{\boldsymbol{x}} &#x3D; \boldsymbol{J} \cdot \dot{\boldsymbol{q}}$  $\dot{\boldsymbol{x}}$：末端笛卡尔速度（如 $[v_x, v_y, \omega]^T$）  $\dot{\boldsymbol{q}}$：关节速度（如 $[\dot{\theta}_1, \dot{\theta}_2, \dot{\theta}_3]^T$）  静力学层面：$\boldsymbol{\tau} &#x3D; \boldsymbol{J}^T \cdot \boldsymbol{F}$  $\boldsymbol{\tau}$：关节力矩向量  $\boldsymbol{J}^T$：雅可比矩阵的转置  $\boldsymbol{F}$：末端广义力向量（力 + 力矩）   这两个关系是核心，你只要记住：  速度：关节→末端，直接乘 $J$  力：末端→关节，转置乘 $J^T$   雅...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Aliya</div><div class="author-info-description">旅行者</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">18</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/aneo2024"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#React-%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0%E5%BC%82%E6%AD%A5%E7%89%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">React 状态更新异步特性问题分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">问题分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.3.</span> <span class="toc-text">解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BD%BF%E7%94%A8%E6%9D%A1%E4%BB%B6%E6%B8%B2%E6%9F%93"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. 使用条件渲染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BD%BF%E7%94%A8-useEffect-%E7%9B%91%E5%90%AC%E7%8A%B6%E6%80%81%E5%8F%98%E5%8C%96"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. 使用 useEffect 监听状态变化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A3%80%E6%9F%A5-handlePlayLesson-%E5%87%BD%E6%95%B0"><span class="toc-number">1.3.3.</span> <span class="toc-text">3. 检查 handlePlayLesson 函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E6%96%B9%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">验证方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E7%82%B9"><span class="toc-number">1.5.</span> <span class="toc-text">相关技术点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#React-%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0%E6%9C%BA%E5%88%B6"><span class="toc-number">1.5.1.</span> <span class="toc-text">React 状态更新机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E6%B8%B2%E6%9F%93"><span class="toc-number">1.5.2.</span> <span class="toc-text">条件渲染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#useEffect-%E9%92%A9%E5%AD%90"><span class="toc-number">1.5.3.</span> <span class="toc-text">useEffect 钩子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3581640161/" title="协程goroutine">协程goroutine</a><time datetime="2026-05-25T11:51:32.594Z" title="发表于 2026-05-25 19:51:32">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/1320873215/" title="Git 清除敏感提交笔记">Git 清除敏感提交笔记</a><time datetime="2026-05-25T11:51:32.587Z" title="发表于 2026-05-25 19:51:32">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3971268262/" title="React 状态更新异步特性问题分析">React 状态更新异步特性问题分析</a><time datetime="2026-05-25T11:51:03.176Z" title="发表于 2026-05-25 19:51:03">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3585352294/" title="智能机器人复习">智能机器人复习</a><time datetime="2026-05-11T04:43:00.000Z" title="发表于 2026-05-11 12:43:00">2026-05-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/1075719970/" title="智慧农业期末复习">智慧农业期末复习</a><time datetime="2026-05-10T12:47:00.000Z" title="发表于 2026-05-10 20:47:00">2026-05-10</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Aliya</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div><div class="footer_custom_text">@ 2026 Aliya的小岛 | Powered by Hexo & Butterfly</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.9/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script async src="/js/diytitle.js"></script><script async src= "/js/clock-weather.js"></script><script id="canvas_nest" defer="defer" color="0,0,0" opacity="0.7" zIndex="-1" count="120" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>
