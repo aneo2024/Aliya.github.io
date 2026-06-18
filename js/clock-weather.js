@@ -88,8 +88,11 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 
   // 初始化执行
+// 只在首页显示时间天气卡片
+if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
   createWeatherClockDOM();
   updateTimeAndDate();
   setInterval(updateTimeAndDate, 1000);
   fetchWeather();
+}
 });
